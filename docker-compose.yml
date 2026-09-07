@@ -1,0 +1,23 @@
+﻿services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aidiscord
+      POSTGRES_PASSWORD: Johndavin290705
+      POSTGRES_DB: brain
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Semua .sql di folder ini dijalankan otomatis (urut nama) saat DB
+      # pertama kali dibuat. Hanya sekali; kalau volume sudah ada, dilewati.
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aidiscord -d brain"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+ 
+volumes:
+  pgdata:

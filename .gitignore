@@ -1,0 +1,13 @@
+# Pola tanpa garis miring di depan berlaku di semua level,
+# jadi ini sudah mencakup recorder-bot/ dan sql-bot/ sekaligus.
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Histori percakapan yang disimpan FileSystemConversationStore (Vanna)
+conversations/
+
+# Vanna menulis hasil query ke CSV di folder bernama hash per user.
+query_results_*.csv
+sql-bot/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]*/
