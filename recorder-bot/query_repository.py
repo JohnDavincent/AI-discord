@@ -18,24 +18,25 @@ AGREGAT_SQL = {
 }
 
 
-async def calculate_money(shape, period, type ="semua", category=None, key=None):
-    where = [SQL_PERIOD["period"]]
+async def calculate_money(shape, period, tx_type="semua", category=None, keyword=None):
+    """Hitung/ambil data transaksi. Argumennya sudah divalidasi di validator.py."""
+    where = [SQL_PERIOD[period]]
     params = []
-    
-    if type != "semua":
-        params.append(type)
+
+    if tx_type and tx_type != "semua":
+        params.append(tx_type)
         where.append(f"transaction_type = ${len(params)}")
-    
+
     if category:
         params.append(category)
         where.append(f"category = ${len(params)}")
-    
-    if key:
-        params.append(f"%{key}")
-        (f"(title ILIKE ${len(params)} OR raw_message ILIKE ${len(params)})")
-        
+
+    if keyword:
+        params.append(f"%{keyword}%")
+        where.append(f"(title ILIKE ${len(params)} OR raw_message ILIKE ${len(params)})")
+
     clausa = " AND ".join(where)
-    
+
     async with pool().acquire() as conn:
         if shape == "daftar":
             rows = await conn.fetch(

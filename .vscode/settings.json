@@ -1,3 +1,8 @@
 {
-  "python-envs.defaultEnvManager": "ms-python.python:venv"
+  "python-envs.defaultEnvManager": "ms-python.python:venv",
+
+  // Venv tiap bot ada di subfolder-nya sendiri, bukan di root workspace,
+  // jadi auto-discovery tidak menemukannya. Tunjuk manual.
+  "python.defaultInterpreterPath": "${workspaceFolder}/binance/.venv/bin/python",
+  "python.terminal.activateEnvironment": true
 }
