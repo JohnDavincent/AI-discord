@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any
 
-from message_repository import save_message
 from deepseek_client import (
     parse_message,
     answer_with_data,
@@ -87,10 +86,14 @@ async def _resolve(text: str, result: dict) -> dict:
     }
 
 
-async def analyze(text, message_id, channel_id, created_at) -> Draft:
-    """Tafsirkan pesan. Tidak menyentuh tabel transactions sama sekali."""
-    await save_message(message_id, channel_id, text, created_at)
+async def analyze(text, created_at) -> Draft:
+    """Tafsirkan pesan. Tidak menyentuh database sama sekali.
 
+    Pesan user sengaja belum dicatat ke agent_messages: bentuk tabel itu
+    (agent_id, discord_reply_user_message_id) diperuntukkan bagi pesan bot,
+    jadi keputusannya ditunda. message_repository.save_message() dibiarkan
+    utuh supaya tinggal dipanggil lagi kalau sudah diputuskan.
+    """
     result = await _resolve(text, await parse_message(text))
     return Draft(
         text=text,

@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import discord
 
-NAME_W = 16     # lebar kolom judul
+NAME_W = 25     # lebar kolom judul
 AMT_W = 13      # lebar kolom nominal
 WIDTH = NAME_W + AMT_W + 4
 MAX_ROWS = 10   # sisanya diringkas jadi satu baris

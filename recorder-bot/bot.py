@@ -21,6 +21,25 @@ log = logging.getLogger("bot")
 
 ALLOWED = {c.strip() for c in os.getenv("CHANNEL_IDS", "").split(",") if c.strip()}
 
+
+def _wajib(nama: str) -> str:
+    """Ambil env var yang wajib ada. Kosong = berhenti dengan pesan jelas.
+
+    os.environ tidak melempar error untuk 'KUNCI=' yang kosong, dan nilai
+    kosong itu baru ketahuan jauh di dalam library sebagai 401.
+    """
+    nilai = (os.getenv(nama) or "").strip()
+    if not nilai:
+        raise SystemExit(
+            f"{nama} belum diisi di file .env "
+            f"({os.path.abspath('.env')}). Isi dulu, lalu jalankan lagi."
+        )
+    return nilai
+
+
+TOKEN = _wajib("DISCORD_TOKEN")
+_wajib("DEEPSEEK_API")   # dipakai deepseek_client, dicek di awal biar tidak gagal di tengah jalan
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -58,9 +77,7 @@ async def on_message(message: discord.Message):
 
     async with message.channel.typing():
         try:
-            draft = await analyze(
-                message.content, message.id, message.channel.id, message.created_at
-            )
+            draft = await analyze(message.content, message.created_at)
         except ParseFailed:
             await message.reply(
                 "Maaf, saya belum bisa membaca pesan itu. "
@@ -86,4 +103,4 @@ async def on_message(message: discord.Message):
     )
 
 
-client.run(os.environ["DISCORD_TOKEN"])
+client.run(TOKEN)
